@@ -1,28 +1,44 @@
 <html>
   <head>
-  {% load js %}
-  <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-  <script>
-    google.charts.load('current', { 'packages': ['map'] });
-    google.charts.setOnLoadCallback(drawMap);
-    
-    function drawMap() {
-      var a = {{ sample_addresses | js }};
-      var data = google.visualization.arrayToDataTable(a);
+    <style>
+      /* Always set the map height explicitly to define the size of the div
+       * element that contains the map. */
+      #chart_div {
+        height: 100%;
+      }
+      /* Optional: Makes the sample page fill the window. */
+      html, body {
+        height: 100%;
+        margin: 0;
+        padding: 0;
+      }
+    </style>
 
-    var options = {
-      showTooltip: true,
-      showInfoWindow: true
-    };
+    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    var map = new google.visualization.Map(document.getElementById('chart_div'));
+    <script>
+      {% load js %}
+      google.charts.load('current', { 'packages': ['map'] });
+      google.charts.setOnLoadCallback(drawMap);
 
-    map.draw(data, options);
-  };
-  </script>
+      function drawMap() {
+        var a = {{ sample_addresses | js }};
+        var data = google.visualization.arrayToDataTable(a);
+
+        var options = {
+          showTooltip: true,
+          showInfoWindow: true
+        };
+
+        var map = new google.visualization.Map(document.getElementById('chart_div'));
+
+        map.draw(data, options);
+      };
+    </script>
   </head>
   <body>
     <div id="chart_div"></div>
+
     <script async defer
     src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
     </script>
