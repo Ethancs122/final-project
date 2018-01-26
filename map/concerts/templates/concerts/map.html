@@ -22,11 +22,10 @@
       google.charts.setOnLoadCallback(drawMap);
 
       function drawMap() {
-        var a = {{ sample_addresses | js }};
+        var a = {{ data | js }};
         var data = google.visualization.arrayToDataTable(a);
 
         var options = {
-          showTooltip: true,
           showInfoWindow: true
         };
 

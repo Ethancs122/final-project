@@ -3,6 +3,8 @@ from django.http import HttpResponse
 from django.template import RequestContext
 import spotipy
 import spotipy.oauth2 as oauth2
+import bs4
+import urllib.request as url
 
 # Create your views here.
 
@@ -34,7 +36,27 @@ def map(request):
     for item in items:
         top_artists.append(item['name'])
 
-    sample_addresses = [['Address', 'Artist'],
-                        ['Portland, OR, US 1401 North Wheeler Avenue', '<a target="_blank" href="https://google.com">Vince Staples</a>']]
+    data = get_data('bruno mars')
 
-    return render(request, 'concerts/map.html', {'sample_addresses': sample_addresses})
+    return render(request, 'concerts/map.html', {'data': data})
+
+def get_data(artist):
+    response_1 = url.urlopen('https://www.songkick.com/search?utf8=%E2%9C%93&type=initial&query={}'.format(url.quote(artist)))
+    html_1 = response_1.read()
+    soup_1 = bs4.BeautifulSoup(html_1, 'html.parser')
+    is_artist = soup_1.find('li', class_='artist')
+    if is_artist:
+        artist_url = 'https://www.songkick.com' + is_artist.find('a', class_='thumb')['href']
+        response_2 = url.urlopen(artist_url)
+        html_2 = response_2.read()
+        soup_2 = bs4.BeautifulSoup(html_2, 'html.parser')
+        on_tour = soup_2.find('li', class_='ontour').get_text()
+        if on_tour == 'On tour: yes':
+            concerts_url = artist_url + '/calendar'
+            response_3 = url.urlopen(concerts_url)
+            html_3 = response_3.read()
+            soup_3 = bs4.BeautifulSoup(html_3, 'html.parser')
+            times = [tag.get_text(strip=True) for tag in soup_3.find_all('li', class_="with-date")]
+            tickets = ['https://www.songkick.com' + tag.parent['href'] for tag in soup_3.find_all('span', class_='button buy-tickets')]
+            addresses = [' '.join(tag.next_sibling.next_sibling.stripped_strings) for tag in soup_3.find_all('span', class_="venue-name")]
+    return [[address, "<a target=_blank href='{}'>{}</a>".format(ticket, time)] for address, ticket, time in zip(addresses, tickets, times)]
