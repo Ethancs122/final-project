@@ -81,4 +81,6 @@ def get_data(artist):
             tickets = ['https://www.songkick.com' + tag.parent['href'] for tag in soup_3.find_all('span', class_='button buy-tickets')]
             addresses = [' '.join(tag.next_sibling.next_sibling.stripped_strings) for tag in soup_3.find_all('span', class_="venue-name")]
 
-    return [[address, "<a target=_blank href='{}'>{}</a>".format(ticket, time)] for address, ticket, time in zip(addresses, tickets, times)]
+            return [[address, "<a target=_blank href='{}'>{}</a>".format(ticket, time)] for address, ticket, time in zip(addresses, tickets, times)]
+
+    return []
