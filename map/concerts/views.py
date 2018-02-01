@@ -5,6 +5,8 @@ import spotipy
 import spotipy.oauth2 as oauth2
 import bs4
 import urllib.request as url
+import json
+import dateutil.parser
 
 # Create your views here.
 
@@ -38,49 +40,49 @@ def map(request):
     for item in items:
         top_artists.append(item['name'])
 
-    data = get_data('bruno mars')
+    data = get_info('Bruno Mars')
 
     return render(request, 'concerts/map.html', {'data': data})
 
-def get_data(artist):
-    '''
-    Given an artists name, returns a list of lists, each containing the address of the venue where the artist is performing
-    and a html tag containg the ticket information and time of the show.
+def suffix(d):
+    #https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
+    return 'th' if 11<=d<=13 else {1:'st',2:'nd',3:'rd'}.get(d%10, 'th')
 
-    Inputs: 
-        artist (str): the name of the artist
-
-    Returns: list of lists 
-    '''
-
-    response_1 = url.urlopen('https://www.songkick.com/search?utf8=%E2%9C%93&type=initial&query={}'.format(url.quote(artist)))
-    html_1 = response_1.read()
-    soup_1 = bs4.BeautifulSoup(html_1, 'html.parser')
-
-    is_artist = soup_1.find('li', class_='artist')
-
-    if is_artist:
-
-        artist_url = 'https://www.songkick.com' + is_artist.find('a', class_='thumb')['href']
-
-        response_2 = url.urlopen(artist_url)
-        html_2 = response_2.read()
-        soup_2 = bs4.BeautifulSoup(html_2, 'html.parser')
-
-        on_tour = soup_2.find('li', class_='ontour').get_text()
-
-        if on_tour == 'On tour: yes':
-
-            concerts_url = artist_url + '/calendar'
-
-            response_3 = url.urlopen(concerts_url)
-            html_3 = response_3.read()
-            soup_3 = bs4.BeautifulSoup(html_3, 'html.parser')
-
-            times = [tag.get_text(strip=True) for tag in soup_3.find_all('li', class_="with-date")]
-            tickets = ['https://www.songkick.com' + tag.parent['href'] for tag in soup_3.find_all('span', class_='button buy-tickets')]
-            addresses = [' '.join(tag.next_sibling.next_sibling.stripped_strings) for tag in soup_3.find_all('span', class_="venue-name")]
-
-            return [[address, "<a target=_blank href='{}'>{}</a>".format(ticket, time)] for address, ticket, time in zip(addresses, tickets, times)]
-
-    return []
+def get_info(artist):
+	'''
+	Given an artists name, returns a list of lists, each containing the 
+	latitude and longitude of the venue where the artist is performing
+	and a html tag containg the ticket information and time of the show.
+	
+	Inputs: 
+	    artist (str): the name of the artist
+	
+	Returns: list of lists
+	'''
+	response = url.urlopen('http://api.songkick.com/api/3.0/search/artists.json?apikey=cXZIiAYhAxu4hSUU&query={}'
+						   .format(url.quote(artist.replace(' ', '_'))))
+	html = response.read()
+	results = json.loads(html)['resultsPage']['results']
+	if results:
+	    artist = results['artist'][0]
+	    if artist['onTourUntil']:
+	        response = url.urlopen('http://api.songkick.com/api/3.0/artists/{}/calendar.json?apikey=cXZIiAYhAxu4hSUU'
+	                               .format(artist['id']))
+	        html = response.read()
+	        events = json.loads(html)['resultsPage']['results']['event']
+	        data = [['Lat', 'Long', 'Link']]
+	        for event in events:
+	            lat = event['location']['lat']
+	            lng = event['location']['lng']
+	            uri = event['uri']
+	            ISO_8601 = event['start']['datetime']
+	            if ISO_8601:
+	                datetime = dateutil.parser.parse(ISO_8601)
+	                time = datetime.strftime('%A %B %-d{} at %-I:%M %p'.format(suffix(datetime.day)))
+	            else:
+	                date = event['start']['date']
+	                datetime = dateutil.parser.parse(date)
+	                time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
+	            data.append([lat, lng, "<a href='{}'>{}</a>".format(uri, time)])
+	        return data
+	return []
