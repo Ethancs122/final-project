@@ -1,0 +1,45 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Table</title>
+    <link rel="stylesheet" href="//netdna.bootstrapcdn.com/bootstrap/3.1.1/css/bootstrap.min.css">
+    <style type="text/css">
+      .main {
+        margin: 0;
+        position: absolute;
+        top: 10%;
+        left: 50%;
+        transform: translate(-50%, 0%);
+        width: 60%;
+      }
+    </style>
+  </head>
+
+  <body>
+  	<div class="main">
+    	<table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+				<thead>
+					<tr>
+						<th>Ranking</th>
+						<th>Artist</th>
+						<th>Map</th>
+					</tr>
+				</thead>
+				<tbody>
+					{% for artist, identifier in top_artists %}
+						<tr>
+							<td>{{ forloop.counter }}</td>
+							<td>{{ artist }}</td>
+							{% if identifier %}
+								<td><a target=_blank href={{ identifier }}>Upcoming concerts for {{ artist }}</a></td>
+							{% else %}
+								<td>{{ artist }} has no upcoming concerts</td>
+							{% endif %}
+						</tr>
+					{% endfor %}
+				</tbody>
+			</table>
+		</div>
+  </body>
+</html>
+
