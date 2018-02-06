@@ -1,0 +1,63 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Login</title>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <style type="text/css">
+      .center {
+               position: absolute;
+               top: 40%;
+               left: 50%;
+               transform: translate(-50%, -50%);
+               width: 100%;
+              }
+  
+      .inline > * {
+                   display: inline-block;
+                   padding: 5px;
+                  }
+  
+      .form-control {
+                     height: 35px;
+                     font-size: 1.75rem;
+                     font-weight:500;
+                     line-height:1.1;
+                     color: #212529;
+                     margin-top:20px;
+                     margin-bottom:10px;
+                    }
+      img {
+           padding: 20px;
+          }
+    </style>
+  </head>
+  <body>
+    <form action="/concerts/table/?code={{ code }}" method="post">
+      {% csrf_token %}
+      <div class="center">
+        <center>
+          <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" width=20% height=20%/>
+          <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" width=20% height=20%/>
+          <div class="inline">
+            <h3>Find concerts for my top</h3>
+            <select name="limit" class="form-control" style="width: 64px;">
+                <option value=10>10</option>
+                <option value=20>20</option>
+                <option value=30>30</option>
+                <option value=40>40</option>
+                <option value=50>50</option>
+            </select>
+            <h3>artists in the</h3>
+            <select name="time_range" class="form-control" style="width: 194px;">
+              <option value="long_term">long term</option>
+              <option value="medium_term">medium term</option>
+              <option value="short_term">short term</option>
+            </select>
+          </div>
+          <br/>
+          <input type="submit" value="Find concerts" class="btn btn-lg btn-info btn-outline-info"></input>
+        </center>
+      </div>
+    </form>
+  </body>
+</html>

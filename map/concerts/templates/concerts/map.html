@@ -14,6 +14,12 @@
         margin: 0;
         padding: 0;
       }
+      a {
+        color: #17a2b8;
+      }
+      a:hover {
+               color: #138496;
+              }
     </style>
 
     <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
@@ -28,7 +34,13 @@
         var data = google.visualization.arrayToDataTable(a);
 
         var options = {
-          showInfoWindow: true
+          showInfoWindow: true,
+          icons: {
+            default: {
+              normal: '../../static/concerts/normal.png',
+              selected: '../../static/concerts/selected.png'
+            }
+          }
         };
 
         var map = new google.visualization.Map(document.getElementById('chart_div'));

@@ -12,20 +12,30 @@ import dateutil.parser
 
 CLIENT_ID = 'd08338fcf59640419f47f75fc0e924c2'
 CLIENT_SECRET = '729483f1e7e3408bb8f53d1db65ccadf'
-REDIRECT_URI = 'http://127.0.0.1:8000/concerts/table/'
+REDIRECT_URI = 'http://127.0.0.1:8000/concerts/form/'
 SCOPE = 'user-top-read'
-TIME_RANGE = 'long_term'
-LIMIT = 20
-CACHE_PATH = ".cache-info"
+FORM = [10, "long_term"]
 
-SP_OAUTH = oauth2.SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, scope=SCOPE, cache_path=CACHE_PATH)
+SP_OAUTH = oauth2.SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, scope=SCOPE)
 
 def index(request):
-    
     authorize_url = SP_OAUTH.get_authorize_url()
     return render(request, 'concerts/index.html', {'authorize_url': authorize_url})
 
+def form(request):
+    code = request.GET.get('code')
+    return render(request, 'concerts/form.html', {'code': code})
+
 def table(request):
+
+    if request.POST:
+        limit = request.POST['limit']
+        time_range = request.POST['time_range']
+        FORM[0] = limit
+        FORM[1] = time_range
+    else:
+        limit = FORM[0]
+        time_range = FORM[1]
 
     token_info = SP_OAUTH.get_cached_token()
 
@@ -34,9 +44,13 @@ def table(request):
         token_info = SP_OAUTH.get_access_token(code)
 
     token = token_info['access_token']
-    top_artists = []
     sp = spotipy.Spotify(auth=token)
-    items = sp.current_user_top_artists(time_range=TIME_RANGE, limit=LIMIT)['items']
+    SP_OAUTH.cache_path = '.cache-{}'.format(sp.me()['id'])
+    SP_OAUTH._save_token_info(token_info)
+
+    top_artists = []
+    items = sp.current_user_top_artists(time_range=time_range, limit=limit)['items']
+    
     for item in items:
         artist = item['name']
         top_artists.append((artist, get_identifier(artist)))
