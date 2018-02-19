@@ -110,4 +110,3 @@ def get_info(identifier):
             time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
         data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
     return data
-    return []
