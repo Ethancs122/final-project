@@ -80,7 +80,7 @@ def get_identifier(artist):
     '''
     response = url.urlopen('http://api.songkick.com/api/3.0/search/artists.json?apikey=cXZIiAYhAxu4hSUU&query={}'
                            .format(url.quote(artist.replace(' ', '_'))))
-    html = response.read()
+    html = response.read().decode('utf-8')
     results = json.loads(html)['resultsPage']['results']
     if results:
         artist = results['artist'][0]
@@ -93,7 +93,7 @@ def get_identifier(artist):
 def get_info(identifier):
     response = url.urlopen('http://api.songkick.com/api/3.0/artists/{}/calendar.json?apikey=cXZIiAYhAxu4hSUU'
                            .format(identifier))
-    html = response.read()
+    html = response.read().decode('utf-8')
     events = json.loads(html)['resultsPage']['results']['event']
     data = [['Lat', 'Long', 'Link']]
     for event in events:
