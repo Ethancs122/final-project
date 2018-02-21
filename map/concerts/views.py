@@ -8,8 +8,6 @@ import urllib.request as url
 import json
 import dateutil.parser
 
-# Create your views here.
-
 CLIENT_ID = 'd08338fcf59640419f47f75fc0e924c2'
 CLIENT_SECRET = '729483f1e7e3408bb8f53d1db65ccadf'
 REDIRECT_URI = 'http://127.0.0.1:8000/concerts/form/'
