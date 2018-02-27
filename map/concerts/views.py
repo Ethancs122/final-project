@@ -13,6 +13,7 @@ CLIENT_SECRET = '729483f1e7e3408bb8f53d1db65ccadf'
 REDIRECT_URI = 'http://127.0.0.1:8000/concerts/form/'
 SCOPE = 'user-top-read'
 FORM = [10, "long_term"]
+CODE = ['', '']
 
 SP_OAUTH = oauth2.SpotifyOAuth(CLIENT_ID, CLIENT_SECRET, REDIRECT_URI, scope=SCOPE)
 
@@ -35,16 +36,18 @@ def table(request):
         limit = FORM[0]
         time_range = FORM[1]
 
-    token_info = SP_OAUTH.get_cached_token()
-
-    if not token_info:
-        code = request.GET.get('code')
-        token_info = SP_OAUTH.get_access_token(code)
-
-    token = token_info['access_token']
-    sp = spotipy.Spotify(auth=token)
-    SP_OAUTH.cache_path = '.cache-{}'.format(sp.me()['id'])
-    SP_OAUTH._save_token_info(token_info)
+    CODE[1] = request.GET.get('code')
+    if CODE[0] != CODE[1]:
+        token_info = SP_OAUTH.get_access_token(CODE[1])
+        token = token_info['access_token']
+        sp = spotipy.Spotify(auth=token)
+        SP_OAUTH.cache_path = '.cache-{}'.format(sp.me()['id'])
+        SP_OAUTH._save_token_info(token_info)
+        CODE[0] = CODE[1]
+    else:
+        token_info = SP_OAUTH.get_cached_token()
+        token = token_info['access_token']
+        sp = spotipy.Spotify(auth=token)
 
     top_artists = []
     items = sp.current_user_top_artists(time_range=time_range, limit=limit)['items']
