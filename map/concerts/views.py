@@ -61,9 +61,9 @@ def map(request, identifier):
 
     ident, name = identifier.split('_', 1)
     name = name.replace('_', ' ')
-    data = get_info(ident)
+    data, table_data = get_info(ident)
 
-    return render(request, 'concerts/map.html', {'data': data,'name': name})
+    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data })
 
 def suffix(d):
     #https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
@@ -87,11 +87,14 @@ def get_info(identifier):
                            .format(identifier))
     html = response.read().decode('utf-8')
     events = json.loads(html)['resultsPage']['results']['event']
+    table_data = []
     data = [['Lat', 'Long', 'Link']]
     for event in events:
         lat = event['location']['lat']
         lng = event['location']['lng']
         uri = event['uri']
+        city = event['venue']['metroArea']['displayName']
+        venue = event['venue']['displayName']
         ISO_8601 = event['start']['datetime']
         if ISO_8601:
             datetime = dateutil.parser.parse(ISO_8601)
@@ -100,5 +103,6 @@ def get_info(identifier):
             date = event['start']['date']
             datetime = dateutil.parser.parse(date)
             time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
+        table_data.append([time, venue, city])
         data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
-    return data
+    return data, table_data

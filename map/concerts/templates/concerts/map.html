@@ -1,7 +1,7 @@
 <!doctype html>
 <html>
-  <head>
-    <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
+<head>
+  <nav class="navbar navbar-toggleable-md navbar-light bg-faded">
     <button class="navbar-toggler navbar-toggler-right" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
       <span class="navbar-toggler-icon"></span>
     </button>
@@ -14,26 +14,30 @@
       </ul>
     </div>
   </nav>
-    <h1 align="center">{{ name }}</h1>
-    <title>Map</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <style>
+  <h1 align="center">{{ name }}</h1>
+  <title>Map</title>
+  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+  <style>
       /* Always set the map height explicitly to define the size of the div
-       * element that contains the map. */
+      * element that contains the map. */
       #chart_div {
         height: 100%;
       }
       /* Optional: Makes the sample page fill the window. */
       html, body {
-        height: 80%;
+        height: 100%;
         margin: 0;
         padding: 0;
       }
-    </style>
+      .column{
+        float: left;
+        width: 50%;
+      }
+      </style>
 
-    <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
+      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
 
-    <script>
+      <script>
       {% load js %}
       google.charts.load('current', { 'packages': ['map'] });
       google.charts.setOnLoadCallback(drawMap);
@@ -56,17 +60,44 @@
 
         map.draw(data, options);
       };
-    </script>
-  </head>
-  <body>
-    
-    <div id="chart_div"></div>
+      </script>
+    </head>
+    <body>
 
-    <script async defer
-    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
-    </script>
-    <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-<script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-<script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+      <div class="column">
+        <div class="main">
+         <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+          <thead>
+           <tr>
+            <th></th>
+            <th>Date</th>
+            <th>Venue</th>
+            <th>City</th>
+          </tr>
+        </thead>
+        <tbody>
+         {% for Date, Venue, City in table_data %}
+         <tr>
+           <td>{{ forloop.counter }}</td>
+           <td>{{ Date }}</td>
+           <td>{{ Venue }}</td>
+           <td>{{ City }}</td>
+         </tr>
+         {% endfor %}
+       </tbody>
+     </table>
+   </div>
+ </div>
+ <div class="column">
+
+  <div id="chart_div"></div>
+
+  <script async defer
+  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
+  </script>
+  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
+  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
+  <div class="column">
   </body>
-</html>
+  </html>
