@@ -6,5 +6,5 @@ urlpatterns = [
     path('', views.index, name='index'),
     path('form/', views.form, name='form'),
     path('table/', views.table, name='table'),
-    path('table/<int:identifier>', views.map, name='map')
+    path('table/<str:identifier>', views.map, name='map')
 ]

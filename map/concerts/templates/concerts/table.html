@@ -63,7 +63,8 @@
                                                         if (page.totalEntries) {
                                                           artist = page.results.artist[0]
                                                           if (artist.onTourUntil) {
-                                                            $("#" + (i + 1)).append('<a target=_blank href=' + artist.id + '>Upcoming concerts for ' + val + '</a>')
+                                                            var str = artist.id + '_' + val.replace(/\s/g, '_');
+                                                            $("#" + (i + 1)).append('<a target=_blank href=' + str + '>Upcoming concerts for ' + val + '</a>')
                                                           }
                                                           else {
                                                             $("#" + (i + 1)).append(val + ' has no upcoming concerts')
