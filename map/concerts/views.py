@@ -54,7 +54,7 @@ def table(request):
     
     for item in items:
         artist = item['name']
-        top_artists.append((artist, get_identifier(artist)))
+        top_artists.append(artist) #((artist, get_identifier(artist)))
 
     return render(request, 'concerts/table.html', {'top_artists': top_artists})
 
