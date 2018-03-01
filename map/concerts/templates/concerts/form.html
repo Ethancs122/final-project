@@ -55,13 +55,12 @@
            padding: 20px;
           }
     </style>
-    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
     <div class="bar">
-      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
+      <div style="margin-left: 2%; width: 77px;"></div>
       <h1 class="title">Concert Finder</h1>
-      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" id="logout" style="margin-right: 2%">Logout</a>
+      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%;">Logout</a>
     </div>
     <hr style="margin: 0;"/>
     <form action="/concerts/table/?code={{ code }}" method="post">
@@ -92,10 +91,5 @@
       <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" class="low_left"/>
       <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" class="low_right"/>
     </form>
-    <script type="text/javascript">
-      $('#logout').click(function () {var temp = window.open();
-                                    temp.addEventListener('load', function() {temp.close('https://www.spotify.com/us/logout');});
-                                   })
-    </script>
   </body>
 </html>

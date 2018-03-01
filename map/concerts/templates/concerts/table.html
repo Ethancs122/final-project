@@ -27,7 +27,7 @@
   <div class="bar">
     <a href="http://127.0.0.1:8000/concerts/form/?code={{ code }}" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
     <h1 class="title">Concert Finder</h1>
-    <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" id="logout" style="margin-right: 2%">Logout</a>
+    <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
   </div>
   <hr style="margin: 0;"/>
   <center>
@@ -77,9 +77,6 @@
                                                 );
                                       }
                );
-    $('#logout').click(function () {var temp = window.open();
-                                    temp.addEventListener('load', function() {temp.close('https://www.spotify.com/us/logout');});
-                                   })
   </script>
 </body>
 </html>

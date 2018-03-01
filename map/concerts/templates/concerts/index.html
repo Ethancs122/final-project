@@ -10,6 +10,12 @@
              left: 50%;
              transform: translate(-50%, -50%);
             }
+    .hidden {
+             width: 0;
+             height: 0;
+             border: 0;
+             border: none;
+            }
     </style>
   </head>
 
@@ -21,5 +27,6 @@
         <a href={{ authorize_url }} class="btn btn-lg btn-primary btn-outline-primary">Log in with Spotify</a>
       </center>
     </div>
+    <iframe src="https://www.spotify.com/us/logout" class="hidden"></iframe>
   </body>
 </html>
