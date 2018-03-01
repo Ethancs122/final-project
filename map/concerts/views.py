@@ -55,7 +55,7 @@ def table(request):
         artist = item['name']
         top_artists.append(artist) #((artist, get_identifier(artist)))
 
-    return render(request, 'concerts/table.html', {'top_artists': top_artists})
+    return render(request, 'concerts/table.html', {'top_artists': top_artists, 'code': CODE[1]})
 
 def map(request, identifier):
 

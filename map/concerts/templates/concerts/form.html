@@ -1,16 +1,31 @@
 <!doctype html>
 <html>
   <head>
-    <title>Login</title>
+    <title>Finder</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Codystar" rel="stylesheet">
     <style type="text/css">
       .center {
                position: absolute;
-               top: 40%;
+               top: 50%;
                left: 50%;
                transform: translate(-50%, -50%);
                width: 100%;
               }
+
+      .low_left {
+                 position: absolute;
+                 bottom: 0;
+                 left: 0;
+                 height: 100px;
+                }
+
+      .low_right {
+                  position: absolute;
+                  bottom: 0;
+                  right: 0;
+                  height: 100px;
+                 }
   
       .inline > * {
                    display: inline-block;
@@ -26,18 +41,33 @@
                      margin-top:20px;
                      margin-bottom:10px;
                     }
+      .bar {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            margin-top: 1%;
+           }
+      .title {
+              font-size: 84px;
+              font-family: 'Codystar', cursive;
+             }
       img {
            padding: 20px;
           }
     </style>
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
   </head>
   <body>
+    <div class="bar">
+      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
+      <h1 class="title">Concert Finder</h1>
+      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" id="logout" style="margin-right: 2%">Logout</a>
+    </div>
+    <hr style="margin: 0;"/>
     <form action="/concerts/table/?code={{ code }}" method="post">
       {% csrf_token %}
       <div class="center">
         <center>
-          <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" width=20% height=20%/>
-          <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" width=20% height=20%/>
           <div class="inline">
             <h3>Find concerts for my top</h3>
             <select name="limit" class="form-control" style="width: 64px;">
@@ -56,8 +86,16 @@
           </div>
           <br/>
           <input type="submit" value="Find concerts" class="btn btn-lg btn-primary btn-outline-primary"></input>
+          <br/>
         </center>
       </div>
+      <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" class="low_left"/>
+      <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" class="low_right"/>
     </form>
+    <script type="text/javascript">
+      $('#logout').click(function () {var temp = window.open();
+                                    temp.addEventListener('load', function() {temp.close('https://www.spotify.com/us/logout');});
+                                   })
+    </script>
   </body>
 </html>
