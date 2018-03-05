@@ -3,7 +3,7 @@
   <head>
     <title>Finder</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
     <style type="text/css">
       .center {
                position: absolute;
@@ -42,24 +42,26 @@
                      margin-bottom:10px;
                     }
       .bar {
+            margin-top: 1%;
             display: flex;
             align-items: center;
             justify-content: space-between;
-            margin-top: 1%;
            }
-      .title {
-              font-size: 72px;
-              font-family: 'Poiret One', cursive;
-             }
+      h1 {
+        margin-top: 1%;
+        font-size: 84px;
+        font-family: 'Josefin Sans', sans-serif;
+      }
       img {
-           padding: 20px;
+           margin: 2%;
+           padding: 1%;
           }
     </style>
   </head>
   <body>
     <div class="bar">
-      <div style="margin-left: 2%; width: 77px;"></div>
-      <h1 class="title">Concert Finder</h1>
+      <div style="margin-left: 2%; width: 92px;"></div>
+      <h1>Concert Finder</h1>
       <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%;">Logout</a>
     </div>
     <hr style="margin: 0;"/>
@@ -91,5 +93,9 @@
       <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" class="low_left"/>
       <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" class="low_right"/>
     </form>
+    <script type="text/javascript">
+      var width = document.getElementById('foo').offsetWidth
+      document.write(width)
+    </script>
   </body>
 </html>

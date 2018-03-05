@@ -3,21 +3,22 @@
 <head>
   <title>Table</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
   <style type="text/css">
   .main {
     width: 60%;
-    padding-top: 1rem;
+    margin-top: 1rem;
   }
   .bar {
+    margin-top: 1%;
     display: flex;
     align-items: center;
     justify-content: space-between;
-    margin-top: 1%;
   }
-  .title {
-    font-size: 72px;
-    font-family: 'Poiret One', cursive;
+  h1 {
+    margin-top: 1%;
+    font-size: 84px;
+    font-family: 'Josefin Sans', sans-serif;
   }
   </style>
   <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
@@ -26,7 +27,7 @@
 <body>
   <div class="bar">
     <a href="http://127.0.0.1:8000/concerts/form/?code={{ code }}" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
-    <h1 class="title">Concert Finder</h1>
+    <h1>Concert Finder</h1>
     <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
   </div>
   <hr style="margin: 0;"/>
@@ -64,7 +65,7 @@
                                                           artist = page.results.artist[0]
                                                           if (artist.onTourUntil) {
                                                             var str = artist.id + '_' + val.replace(/\s/g, '_');
-                                                            $("#" + (i + 1)).append('<a target=_blank href=' + str + '>Upcoming concerts for ' + val + '</a>')
+                                                            $("#" + (i + 1)).append('<a href=' + str + '?code={{code}}' + '>Upcoming concerts for ' + val + '</a>')
                                                           }
                                                           else {
                                                             $("#" + (i + 1)).append(val + ' has no upcoming concerts')

@@ -3,53 +3,111 @@
 <head>
   <title>Map</title>
   <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-   <link href="https://fonts.googleapis.com/css?family=Poiret+One" rel="stylesheet">
+  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
   <style>
       /* Always set the map height explicitly to define the size of the div
       * element that contains the map. */
       #chart_div {
-        height: 90%;
-        width: 80%;
-        margin: auto;
-        margin-bottom: 3%;
-        margin-top: 2%;
+        height: 100vh;
       }
-      /* Optional: Makes the sample page fill the window. */
       .column{
         float: left;
         width: 38%;
         margin-left: 6%;
         margin-right: 6%;
-
+        margin-bottom: 1%;
       }
       .bar {
+        pointer-events: none;
+        margin-top: 1%;
+        z-index: 1;
+        position: absolute;
+        width: 100%;
         display: flex;
         align-items: center;
         justify-content: space-between;
-        margin-top: 1%;
       }
-      .title {
-        font-size: 72px;
-        font-family: 'Poiret One', cursive;
+      section::after {
+        pointer-events: none;
+        position: absolute;
+        z-index: 1;
+        bottom: 0;
+        left: 0;
+        content: '';
+        width: 100%;
+        height: 15%;
+        background: -webkit-linear-gradient(top,rgba(0,0,0,0) 0,rgba(0,0,0,.6) 80%,rgba(0,0,0,.6) 100%);
+      }
+      .scroll a {
+        padding-top: 60px;
+        position: absolute;
+        top: 90%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        z-index: 2;
+        color: white;
+        font-family: 'Josefin Sans', sans-serif;
+        font-size: 2rem;
+        text-decoration: none;
+        transition: opacity .3s;
+      }
+      .scroll a:hover {
+        opacity: .5;
+      }
+      .scroll a span {
+        position: absolute;
+        top: 0;
+        left: 50%;
+        width: 24px;
+        height: 24px;
+        margin-left: -12px;
+        border-left: 1px solid #fff;
+        border-bottom: 1px solid #fff;
+        -webkit-transform: rotate(-45deg);
+        box-sizing: border-box;
+      }
+      #button {
+        pointer-events: all;
+        border-color: white;
+        color: white;
+      }
+      #button:hover {
+        background-color: rgba(255, 255, 255, 0.5);
+      }
+      #artist {
+        height: 28px;
+      }
+      h1 {
+        margin-top: 1%;
+        color: #007bff;
+        -webkit-text-stroke-width: 0.8px;
+        -webkit-text-stroke-color: white;
+        font-size: 84px;
+        font-family: 'Josefin Sans', sans-serif;
+      }
+      h2 {
+        font-size: 48px;
+        font-family: 'Josefin Sans', sans-serif;
+      }
+      h3 {
+        margin-bottom: 4%;
       }
       p {
-        text-indent: 50px;
-      }
-
-      h1 {
-        margin-bottom: 4%;
-        font-size: 72px;
-        font-family: 'Poiret One';
-      }
-
-
-      h3 {
-        margin-bottom: : 4%;
+        text-indent: 40px;
       }
       </style>
 
+      
+      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+      <script type="text/javascript">
+        $(function() {
+          $('a[href="#artist"]').on('click', function(e) {
+            e.preventDefault();
+            $('html, body').animate({ scrollTop: $($(this).attr('href')).offset().top}, 500, 'linear');
+          });
+        });
+      </script>
       <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-
       <script>
       {% load js %}
       google.charts.load('current', { 'packages': ['map'] });
@@ -76,56 +134,48 @@
       </script>
     </head>
     <body>
-     <div class="bar">
-      <a onclick="javascript:window.close()" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
-      <h1 class="title">Concert Finder</h1>
-      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
-    </div>
-    <div id='map'>
+      <div class="bar">
+        <a id="button" href="http://127.0.0.1:8000/concerts/table/?code={{ code }}" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
+        <h1>Concert Finder</h1>
+        <a id="button" href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
+      </div>
+      <section class="scroll">
+        <a href="#artist"><span></span>More Info</a>
+      </section>
+
       <div id="chart_div"></div>
-    </div>
 
-    <h1 align=center><b>{{ name }}</b></h1>
+      <div id="artist"></div>
+      <h2 align="center"><b>{{ name }}</b></h2>
 
-
+      <div class="column">
+        <h3 align="center">Tour Dates</h3>
+        <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th></th>
+              <th>Date</th>
+              <th>Venue</th>
+              <th>City</th>
+            </tr>
+          </thead>
+          <tbody>
+           {% for Date, Venue, City in table_data %}
+           <tr>
+             <td>{{ forloop.counter }}</td>
+             <td>{{ Date }}</td>
+             <td>{{ Venue }}</td>
+             <td>{{ City }}</td>
+           </tr>
+           {% endfor %}
+          </tbody>
+        </table>
+      </div>
     <div class="column">
-      <h3 align=center>Tour Dates</h3>
-      <div class="main">
-       <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
-        <thead>
-         <tr>
-          <th></th>
-          <th>Date</th>
-          <th>Venue</th>
-          <th>City</th>
-        </tr>
-      </thead>
-      <tbody>
-       {% for Date, Venue, City in table_data %}
-       <tr>
-         <td>{{ forloop.counter }}</td>
-         <td>{{ Date }}</td>
-         <td>{{ Venue }}</td>
-         <td>{{ City }}</td>
-       </tr>
-       {% endfor %}
-     </tbody>
-   </table>
- </div>
-</div>
-<div class="column">
- <h3 align=center>About</h3>
- <p>{{ bio }}</p>
-</div>
-
-
-
-  <script async defer
-  src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
-  </script>
-  <script src="https://code.jquery.com/jquery-3.1.1.slim.min.js" integrity="sha384-A7FZj7v+d/sdmMqp/nOQwliLvUsJfDHW+k9Omg/a/EheAdgtzNs3hpfag6Ed950n" crossorigin="anonymous"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/tether/1.4.0/js/tether.min.js" integrity="sha384-DztdAPBWPRXSA/3eYEEUWrWCy7G5KFbe8fFjk5JAIxUYHKkDx6Qin1DkWx51bBrb" crossorigin="anonymous"></script>
-  <script src="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0-alpha.6/js/bootstrap.min.js" integrity="sha384-vBWWzlZJ8ea9aCX4pEW3rVHjgjt7zpkNpZk+02D9phzyeVkE+jo0ieGizqPLForn" crossorigin="anonymous"></script>
-  <div class="column">
+      <h3 align=center>About</h3>
+      <p>{{ bio }}</p>
+    </div>
+    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
+    </script>
   </body>
   </html>
