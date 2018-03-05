@@ -7,6 +7,7 @@ import bs4
 import urllib.request as url
 import json
 import dateutil.parser
+import wikipedia
 
 CLIENT_ID = 'd08338fcf59640419f47f75fc0e924c2'
 CLIENT_SECRET = '729483f1e7e3408bb8f53d1db65ccadf'
@@ -61,9 +62,9 @@ def map(request, identifier):
 
     ident, name = identifier.split('_', 1)
     name = name.replace('_', ' ')
-    data, table_data = get_info(ident)
+    data, table_data, bio = get_info(ident, name)
 
-    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data })
+    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data, 'bio': bio})
 
 def suffix(d):
     #https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
@@ -82,7 +83,7 @@ def get_identifier(artist):
             return None
     return None
 
-def get_info(identifier):
+def get_info(identifier, name):
     response = url.urlopen('http://api.songkick.com/api/3.0/artists/{}/calendar.json?apikey=cXZIiAYhAxu4hSUU'
                            .format(identifier))
     html = response.read().decode('utf-8')
@@ -105,4 +106,14 @@ def get_info(identifier):
             time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
         table_data.append([time, venue, city])
         data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
-    return data, table_data
+
+
+    numblist = wikipedia.search(name + ' music')
+    if numblist:
+        numb = numblist[0]
+        bio = wikipedia.page(numb).summary
+
+    else:
+        bio = 'No Information Found'
+
+    return data, table_data, bio
