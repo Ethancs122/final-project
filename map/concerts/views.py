@@ -111,7 +111,10 @@ def get_info(identifier, name):
     numblist = wikipedia.search(name + ' music')
     if numblist:
         numb = numblist[0]
-        bio = wikipedia.page(numb).summary
+        if '(disambiguation)' not in numb:
+            bio = wikipedia.page(numb).summary
+        else:
+            bio = 'No Information Found'
 
     else:
         bio = 'No Information Found'
