@@ -25,7 +25,7 @@ SECRET_KEY = '6w^vas35^21)vb_v)!j_ik3x3vk3yj6^%vw*ibgw&#^2i!rbl('
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['ipitman.pythonanywhere.com']
 
 
 # Application definition
