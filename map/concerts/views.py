@@ -3,7 +3,6 @@ from django.http import HttpResponse
 from django.template import RequestContext
 import spotipy
 import spotipy.oauth2 as oauth2
-import bs4
 import urllib.request as url
 import json
 from bs4 import BeautifulSoup
@@ -55,7 +54,7 @@ def table(request):
     
     for item in items:
         artist = item['name']
-        top_artists.append(artist) #((artist, get_identifier(artist)))
+        top_artists.append(artist)
 
     return render(request, 'concerts/table.html', {'top_artists': top_artists, 'code': CODE[1]})
 
@@ -63,63 +62,51 @@ def map(request, identifier):
 
     ident, name = identifier.split('_', 1)
     name = name.replace('_', ' ')
-    data, table_data, bio = get_info(ident, name)
-
-    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data, 'bio': bio})
+    #html = url.urlopen('https://www.songkick.com/artists/' + ident).read()
+    #soup = BeautifulSoup(html)
+    #bio_tag = soup.find('div', id='biography')
+    #if bio_tag:
+    #    bio = bio_tag.get_text()
+    #else:
+    #    bio = ''
+    return render(request, 'concerts/map.html', {'ident': ident, 'name': name, 'code': CODE[1]})
 
 def suffix(d):
     #https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
     return 'th' if 11<=d<=13 else {1:'st',2:'nd',3:'rd'}.get(d%10, 'th')
 
-def get_identifier(artist):
-    response = url.urlopen('http://api.songkick.com/api/3.0/search/artists.json?apikey=cXZIiAYhAxu4hSUU&query={}'
-                           .format(url.quote(artist.replace(' ', '_'))))
-    html = response.read().decode('utf-8')
-    results = json.loads(html)['resultsPage']['results']
-    if results:
-        artist = results['artist'][0]
-        if artist['onTourUntil']:
-            return artist['id']
-        else:
-            return None
-    return None
-
-def get_info(identifier, name):
-    response = url.urlopen('http://api.songkick.com/api/3.0/artists/{}/calendar.json?apikey=cXZIiAYhAxu4hSUU'
-                           .format(identifier))
-    html = response.read().decode('utf-8')
-    events = json.loads(html)['resultsPage']['results']['event']
-    table_data = []
-    data = [['Lat', 'Long', 'Link']]
-    for event in events:
-        lat = event['location']['lat']
-        lng = event['location']['lng']
-        uri = event['uri']
-        city = event['venue']['metroArea']['displayName']
-        venue = event['venue']['displayName']
-        ISO_8601 = event['start']['datetime']
-        if ISO_8601:
-            datetime = dateutil.parser.parse(ISO_8601)
-            time = datetime.strftime('%A %B %-d{} at %-I:%M %p'.format(suffix(datetime.day)))
-        else:
-            date = event['start']['date']
-            datetime = dateutil.parser.parse(date)
-            time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
-        table_data.append([time, venue, city])
-        data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
-
-    request = url.urlopen('https://www.songkick.com/artists/' + identifier)
-    html = request.read()
-    soup = BeautifulSoup(html)
-    bio_tag = soup.find_all('div', id='biography')
-    if bio_tag:
-        paragraphs = bio_tag[0].find_all('p')
-        bio_str = ''
-        for paragraph in paragraphs:
-            bio_str += paragraph.text
-
-    else:
-        bio_str = ''
-
-
-    return data, table_data, bio_str
+#def get_info(identifier, name):
+#    response = url.urlopen('http://api.songkick.com/api/3.0/artists/{}/calendar.json?apikey=cXZIiAYhAxu4hSUU'
+#                           .format(identifier))
+#    html = response.read().decode('utf-8')
+#    events = json.loads(html)['resultsPage']['results']['event']
+#    table_data = []
+#    data = [['Lat', 'Long', 'Link']]
+#    for event in events:
+#        lat = event['location']['lat']
+#        lng = event['location']['lng']
+#        uri = event['uri']
+#        city = event['venue']['metroArea']['displayName']
+#        venue = event['venue']['displayName']
+#        ISO_8601 = event['start']['datetime']
+#        if ISO_8601:
+#            datetime = dateutil.parser.parse(ISO_8601)
+#            time = datetime.strftime('%A %B %-d{} at %-I:%M %p'.format(suffix(datetime.day)))
+#        else:
+#            date = event['start']['date']
+#            datetime = dateutil.parser.parse(date)
+#            time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
+#        table_data.append([time, venue, city])
+#        data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
+#
+#    request = url.urlopen('https://www.songkick.com/artists/' + identifier)
+#    html = request.read()
+#    soup = BeautifulSoup(html)
+#    bio_tag = soup.find('div', id='biography')
+#    if bio_tag:
+#        bio = bio_tag.get_text()
+#
+#    else:
+#        bio = ''
+#
+#    return data, table_data, bio

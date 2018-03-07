@@ -107,31 +107,6 @@
           });
         });
       </script>
-      <script type="text/javascript" src="https://www.gstatic.com/charts/loader.js"></script>
-      <script>
-      {% load js %}
-      google.charts.load('current', { 'packages': ['map'] });
-      google.charts.setOnLoadCallback(drawMap);
-
-      function drawMap() {
-        var a = {{ data | js }};
-        var data = google.visualization.arrayToDataTable(a);
-
-        var options = {
-          showInfoWindow: true,
-          icons: {
-            default: {
-              normal: '../../static/concerts/normal.png',
-              selected: '../../static/concerts/selected.png'
-            }
-          }
-        };
-
-        var map = new google.visualization.Map(document.getElementById('chart_div'));
-
-        map.draw(data, options);
-      };
-      </script>
     </head>
     <body>
       <div class="bar">
@@ -159,22 +134,56 @@
               <th>City</th>
             </tr>
           </thead>
-          <tbody>
-           {% for Date, Venue, City in table_data %}
-           <tr>
-             <td>{{ forloop.counter }}</td>
-             <td>{{ Date }}</td>
-             <td>{{ Venue }}</td>
-             <td>{{ City }}</td>
-           </tr>
-           {% endfor %}
+          <tbody id="table">
           </tbody>
         </table>
       </div>
-    <div class="column">
+    <div class="column" id="about">
       <h3 align=center>About</h3>
-      <p>{{ bio }}</p>
     </div>
+    <script>
+      function initMap() {
+        var map = new google.maps.Map(document.getElementById('chart_div'));
+        var bounds = new google.maps.LatLngBounds();
+        $.getJSON("http://api.songkick.com/api/3.0/artists/" + {{ident}} + "/calendar.json?apikey=cXZIiAYhAxu4hSUU", 
+              function(data) {
+                              var events = data.resultsPage.results.event;
+                              for(var i = 0; i < events.length; i++) {
+                                var event = events[i];
+                                var latlng = {lat: event.location.lat, lng: event.location.lng};
+                                var uri = event.uri
+                                var city = event.venue.metroArea.displayName
+                                var venue = event.venue.displayName
+                                var ISO_8601 = event.start.datetime
+                                if (!ISO_8601) {
+                                  var ISO_8601 = event.start.date
+                                }
+                                $('#table').append("<tr><td>"+(i+1)+"</td><td>"+ISO_8601+"</td><td>"+venue+"</td><td>"+city+"</td></tr>");
+                                var marker = new google.maps.Marker({
+                                  position: latlng,
+                                  label: ''+(i+1),
+                                  map: map
+                                });
+                                bounds.extend(latlng)
+                                var infowindow = new google.maps.InfoWindow()
+                                google.maps.event.addListener(marker, 'click', function() {
+                                  infowindow.setContent("<a target=_blank href="+uri+">"+venue+", "+city+"</a>");
+                                  infowindow.open(map, this);
+                                });
+                              }
+                              map.fitBounds(bounds);
+                             });
+      }
+      /*
+      var url='http://query.yahooapis.com/v1/public/yql?q=select * from html where url=\'https://www.songkick.com/artists/'+ident+'\' and xpath=\'//div[@id="biography"]\'&format=json&callback=?';
+
+      $.getJSON(url, function(data) {
+          $.each(data.query.results.div, function(){       
+              $('#about').append('<p>'+this.content+'</p>')  
+          });
+      });
+      */
+    </script>
     <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
     </script>
   </body>
