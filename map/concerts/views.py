@@ -6,6 +6,7 @@ import spotipy.oauth2 as oauth2
 import bs4
 import urllib.request as url
 import json
+from bs4 import BeautifulSoup
 import dateutil.parser
 import wikipedia
 
@@ -54,7 +55,7 @@ def table(request):
     
     for item in items:
         artist = item['name']
-        top_artists.append(artist)
+        top_artists.append(artist) #((artist, get_identifier(artist)))
 
     return render(request, 'concerts/table.html', {'top_artists': top_artists, 'code': CODE[1]})
 
@@ -63,9 +64,8 @@ def map(request, identifier):
     ident, name = identifier.split('_', 1)
     name = name.replace('_', ' ')
     data, table_data, bio = get_info(ident, name)
-    code = request.GET.get('code')
 
-    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data, 'bio': bio, 'code': code})
+    return render(request, 'concerts/map.html', {'data': data,'name': name,'table_data': table_data, 'bio': bio})
 
 def suffix(d):
     #https://stackoverflow.com/questions/5891555/display-the-date-like-may-5th-using-pythons-strftime
@@ -106,18 +106,20 @@ def get_info(identifier, name):
             datetime = dateutil.parser.parse(date)
             time = datetime.strftime('%A %B %-d{}'.format(suffix(datetime.day)))
         table_data.append([time, venue, city])
-        data.append([lat, lng, "<a target=_blank href='{}'>{}, {}</a>".format(uri, venue, city)])
+        data.append([lat, lng, "<a target=_blank href='{}'>{}</a>".format(uri, time)])
 
-
-    numblist = wikipedia.search(name + ' music')
-    if numblist:
-        numb = numblist[0]
-        if '(disambiguation)' not in numb:
-            bio = wikipedia.page(numb).summary
-        else:
-            bio = 'No Information Found'
+    request = url.urlopen('https://www.songkick.com/artists/' + identifier)
+    html = request.read()
+    soup = BeautifulSoup(html)
+    bio_tag = soup.find_all('div', id='biography')
+    if bio_tag:
+        paragraphs = bio_tag[0].find_all('p')
+        bio_str = ''
+        for paragraph in paragraphs:
+            bio_str += paragraph.text
 
     else:
-        bio = 'No Information Found'
+        bio_str = ''
 
-    return data, table_data, bio
+
+    return data, table_data, bio_str
