@@ -2,20 +2,25 @@
 <html>
   <head>
     <title>Login</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+
     <style>
-    .center {
-             position: absolute;
-             top: 40%;
-             left: 50%;
-             transform: translate(-50%, -50%);
-            }
-    .hidden {
-             width: 0;
-             height: 0;
-             border: 0;
-             border: none;
-            }
+      .center {
+        position: absolute;
+        top: 40%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+      }
+      .hidden {
+        width: 0;
+        height: 0;
+        border: 0;
+        border: none;
+      }
+      img {
+        margin: 4%;
+      }
     </style>
   </head>
 
@@ -23,10 +28,10 @@
     <div class="center">
       <center>
         <img src="/static/concerts/logo.png" alt="ConcertMap" height="300" width="300"/>
-        <br/><br/>
         <a href={{ authorize_url }} class="btn btn-lg btn-primary btn-outline-primary">Log in with Spotify</a>
       </center>
     </div>
+    <!--Load the Spotify logout url in a hidden iframe-->
     <iframe src="https://www.spotify.com/us/logout" class="hidden"></iframe>
   </body>
 </html>

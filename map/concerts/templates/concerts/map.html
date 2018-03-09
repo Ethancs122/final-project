@@ -1,22 +1,22 @@
 <!doctype html>
 <html>
-<head>
-  <title>Map</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
-  <style>
-      /* Always set the map height explicitly to define the size of the div
-      * element that contains the map. */
-      #chart_div {
+  <head>
+    <title>Map</title>
+
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
+
+    <style>
+      #map {
         height: 100vh;
       }
       .left_column {
-        width: 45%;
-        margin-left: 2%;
+        width: 44%;
+        margin-left: 4%;
       }
       .right_column {
-        width: 45%;
-        margin-right: 2%;
+        width: 44%;
+        margin-right: 4%;
       }
       .info {
         display: flex;
@@ -25,10 +25,10 @@
       }
       .bar {
         pointer-events: none;
-        margin-top: 1%;
-        z-index: 1;
         position: absolute;
         width: 100%;
+        z-index: 1;
+        margin-top: 1%;
         display: flex;
         align-items: center;
         justify-content: space-between;
@@ -36,13 +36,13 @@
       .scroll a {
         padding-top: 60px;
         position: absolute;
+        z-index: 1;
         top: 90%;
         left: 50%;
         transform: translate(-50%, -50%);
-        z-index: 2;
         color: #EB4335;
         font-family: 'Josefin Sans', sans-serif;
-        font-size: 2rem;
+        font-size: 40px;
         text-decoration: none;
         transition: opacity .3s;
       }
@@ -56,12 +56,12 @@
         width: 24px;
         height: 24px;
         margin-left: -12px;
-        border-left: 1px solid #EB4335;
-        border-bottom: 1px solid #EB4335;
+        border-left: 2px solid #EB4335;
+        border-bottom: 2px solid #EB4335;
         -webkit-transform: rotate(-45deg);
         box-sizing: border-box;
       }
-      #button {
+      #btn {
         pointer-events: all;
         border-color: #EB4335;
         color: #EB4335;
@@ -69,7 +69,7 @@
       #button:hover {
         background-color: rgba(255, 255, 255, 0.5);
       }
-      #artist {
+      #spacer {
         height: 28px;
       }
       h1 {
@@ -87,114 +87,142 @@
       h3 {
         margin-bottom: 4%;
       }
+      img {
+        margin-bottom: 4%;
+      }
       p {
         text-indent: 40px;
       }
-      </style>
-
-      
-      <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
-      {% load static %}
-      <script type="text/javascript" src="{% static '/concerts/jquery.ajax-cross-origin.min.js' %}"></script>
-      <script type="text/javascript">
-        $(function() {
-          $('a[href="#artist"]').on('click', function(e) {
-            e.preventDefault();
-            $('html, body').animate({ scrollTop: $($(this).attr('href')).offset().top}, 500, 'linear');
-          });
+    </style>
+        
+    <!--Load jQuery and the cross-origin jQuery plugin-->
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.10.2/jquery.min.js"></script>
+    <script type="text/javascript" src="/static/concerts/jquery.ajax-cross-origin.min.js"></script>
+    <!--Script to animate scrolling effect for the "More Info" button-->
+    <script type="text/javascript">
+      $(function() {
+        $('a[href="#spacer"]').on('click', function(e) {
+          e.preventDefault();
+          $('html, body').animate({ scrollTop: $($(this).attr('href')).offset().top}, 500, 'linear');
         });
-      </script>
-    </head>
+      });
+    </script>
+  </head>
+
     <body>
       <div class="bar">
-        <a id="button" href="http://127.0.0.1:8000/concerts/table/?code={{ code }}" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
+        <a id="btn" href="/concerts/table/" class="btn btn-lg btn-outline-primary" style="margin-left: 2%">Return</a>
         <h1>Concert Finder</h1>
-        <a id="button" href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
+        <a id="btn" href="/concerts/" class="btn btn-lg btn-outline-primary" style="margin-right: 2%">Logout</a>
       </div>
+
       <section class="scroll">
-        <a href="#artist"><span></span>More Info</a>
+        <a href="#spacer"><span></span>More Info</a>
       </section>
 
-      <div id="chart_div"></div>
+      <!--This is where the map goes-->
+      <div id="map"></div>
 
-      <div id="artist"></div>
+      <div id="spacer"></div>
       <center><h2><b>{{ name }}</b></h2></center>
 
       <div class="info">
         <div class="left_column">
           <center><h3>Tour Dates</h3></center>
-          <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
-            <thead>
-              <tr>
-                <th></th>
-                <th>Date</th>
-                <th>Venue</th>
-                <th>City</th>
-              </tr>
-            </thead>
-            <tbody id="table">
-            </tbody>
-          </table>
+            <table class="datatable table table-striped table-bordered">
+              <thead>
+                <tr>
+                  <th></th>
+                  <th>Date</th>
+                  <th>Venue</th>
+                  <th>City</th>
+                </tr>
+              </thead>
+              <tbody id="table">
+              </tbody>
+            </table>
         </div>
-          <div class="right_column" id="about">
-            <center id='center'>
-            </center>
-          </div>
+
+        <div class="right_column" id="about">
+          <center>
+            <h3>Profile</h3>
+            <img src={{ image_url }} alt='Profile' height='300px'>
+          </center>
+        </div>
       </div>
-    <script>
-      var infowindow = null;
+    <!--This script loads the map and the table 
+        simultaneously in real time as it fetches 
+        the data from songkick-->
+    <script type="text/javascript">
+      /* This function is called automatically once 
+         the google maps API loads */
       function initMap() {
-        var map = new google.maps.Map(document.getElementById('chart_div'));
+        var map = new google.maps.Map(document.getElementById("map"));
+        /* Intialize the map bounds, 
+           which update to fit 
+           the loaded markers */
         var bounds = new google.maps.LatLngBounds();
-        $.getJSON("http://api.songkick.com/api/3.0/artists/" + {{ident}} + "/calendar.json?apikey=cXZIiAYhAxu4hSUU", 
-              function(data) {
-                              var events = data.resultsPage.results.event;
-                              for(var i = 0; i < events.length; i++) {
-                                var event = events[i];
-                                var latlng = {lat: event.location.lat, lng: event.location.lng};
-                                var uri = event.uri
-                                var city = event.venue.metroArea.displayName
-                                var venue = event.venue.displayName
-                                var ISO_8601 = event.start.datetime
-                                if (!ISO_8601) {
-                                  var ISO_8601 = event.start.date
-                                }
-                                $('#table').append("<tr><td>"+(i+1)+"</td><td>"+ISO_8601+"</td><td>"+venue+"</td><td>"+city+"</td></tr>");
-                                var marker = new google.maps.Marker({
-                                  position: latlng,
-                                  label: ''+(i+1),
-                                  html: "<a target=_blank href="+uri+">"+venue+", "+city+"</a>",
-                                  map: map
-                                });
-                                bounds.extend(latlng)
-                                infowindow = new google.maps.InfoWindow({
-                                  content: "holding..."
-                                });
-                                google.maps.event.addListener(marker, 'click', function() {
-                                  infowindow.setContent(this.html);
-                                  infowindow.open(map, this);
-                                });
-                              }
-                              map.fitBounds(bounds);
-                             });
+        /* Get concert information from songkick */
+        $.getJSON("http://api.songkick.com/api/3.0/artists/" + {{ ident }} + "/calendar.json?apikey=cXZIiAYhAxu4hSUU", 
+          function(data) {
+            var events = data.resultsPage.results.event;
+            for(var i = 0; i < events.length; i++) {
+              var event = events[i];
+              var latlng = {lat: event.location.lat, lng: event.location.lng};
+              var uri = event.uri
+              var city = event.venue.metroArea.displayName
+              var venue = event.venue.displayName
+              var ISO_8601 = event.start.datetime
+              if (!ISO_8601) {
+                var ISO_8601 = event.start.date
+              }
+              var row = "<tr>"
+                      + "<td>" + (i + 1) + "</td>"
+                      + "<td>" + ISO_8601 + "</td>"
+                      + "<td>" + venue + "</td>"
+                      + "<td>" + city + "</td>"
+                      + "</tr>"
+              $('#table').append(row);
+              /* Place a marker on the map for the current concert */
+              var marker = new google.maps.Marker({
+                position: latlng,
+                label: '' + (i + 1),
+                html: "<a target=_blank href=" + uri + ">" + venue + ", " + city + "</a>",
+                map: map
+              });
+              /* Update the bounds */
+              bounds.extend(latlng)
+              /* Display a link to buy tickets 
+                 when the user clicks the marker */
+              infowindow = new google.maps.InfoWindow({
+                content: "placeholder"
+              });
+              google.maps.event.addListener(marker, 'click', function() {
+                infowindow.setContent(this.html);
+                infowindow.open(map, this);
+              });
+            }
+            /* Fit the map to the final bounds */
+            map.fitBounds(bounds);
+        });
       }
+    </script>
+    <!--This script only works some of the time. 
+        It is limited by the same-origin policy. 
+        If it works, it scrapes a description of 
+        the artist off songkick, if there is one.-->
+    <script type="text/javascript">
       $.ajax({
         crossOrigin: true,
-        url: "https://www.songkick.com/artists/" + {{ident}},
+        url: "https://www.songkick.com/artists/" + {{ ident }},
         success: function(data) {
-          var description = $($(data).find('div#biography')).find('p');
-          if (description.length == 0) {
-            $('#center').append('<h3>Profile</h3>');
-          }
-          else {
-            $('#center').append('<h3>About</h3>');
-          }
-          $('#center').append($($(data).find('div.col-4.profile-picture-wrap')).find('img.artist.artist-profile-image').css('margin-bottom', '4%'));
-          $('#about').append(description);
+          $('#about').append($($(data).find('div#biography')).find('p'));
         }
       });
     </script>
-    <script async defer src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
+    <!--This script loads the google maps API-->
+    <script async defer 
+    src="https://maps.googleapis.com/maps/api/js?key=AIzaSyDGJH48WTSTLfykQaM-d-LHlVTT1Z0qVYY&callback=initMap">
     </script>
   </body>
-  </html>
+</html>

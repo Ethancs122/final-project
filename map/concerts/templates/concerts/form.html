@@ -2,100 +2,98 @@
 <html>
   <head>
     <title>Finder</title>
+
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Josefin+Sans:300">
+
     <style type="text/css">
       .center {
-               position: absolute;
-               top: 50%;
-               left: 50%;
-               transform: translate(-50%, -50%);
-               width: 100%;
-              }
-
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 100%;
+      }
       .low_left {
-                 position: absolute;
-                 bottom: 0;
-                 left: 0;
-                 height: 100px;
-                }
-
+        position: absolute;
+        bottom: 0;
+        left: 0;
+        height: 64px;
+      }
       .low_right {
-                  position: absolute;
-                  bottom: 0;
-                  right: 0;
-                  height: 100px;
-                 }
-  
+        position: absolute;
+        bottom: 0;
+        right: 0;
+        height: 64px;
+      }
       .inline > * {
-                   display: inline-block;
-                   padding: 5px;
-                  }
-  
-      .form-control {
-                     height: 35px;
-                     font-size: 1.75rem;
-                     font-weight:500;
-                     line-height:1.1;
-                     color: #212529;
-                     margin-top:20px;
-                     margin-bottom:10px;
-                    }
+        display: inline-block;
+        margin: 2px;
+      }
+      .form {
+        font-size: 1.75rem;
+        font-weight: 500;
+        line-height: 1.1;
+        color: #212529;
+        margin-top: 20px;
+        margin-bottom: 10px;
+      }
       .bar {
-            margin-top: 1%;
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-           }
+        margin-top: 1%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
       h1 {
         margin-top: 1%;
         font-size: 84px;
         font-family: 'Josefin Sans', sans-serif;
       }
+      input {
+        margin: 2%;
+      }
       img {
-           margin: 2%;
-           padding: 1%;
-          }
+        margin: 2%;
+      }
     </style>
   </head>
+
   <body>
     <div class="bar">
       <div style="margin-left: 2%; width: 92px;"></div>
       <h1>Concert Finder</h1>
-      <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%;">Logout</a>
+      <a href="/concerts/" class="btn btn-lg btn-outline-primary" style="margin-right: 2%;">Logout</a>
     </div>
+
     <hr style="margin: 0;"/>
-    <form action="/concerts/table/?code={{ code }}" method="post">
+
+    <form action="/concerts/table/" method="post">
       {% csrf_token %}
       <div class="center">
         <center>
           <div class="inline">
             <h3>Find concerts for my top</h3>
-            <select name="limit" class="form-control" style="width: 64px;">
-                <option value=10>10</option>
-                <option value=20>20</option>
-                <option value=30>30</option>
-                <option value=40>40</option>
-                <option value=50>50</option>
+            <select name="limit" class="form" width="64px">
+              <option value=10>10</option>
+              <option value=20>20</option>
+              <option value=30>30</option>
+              <option value=40>40</option>
+              <option value=50>50</option>
             </select>
             <h3>artists in the</h3>
-            <select name="time_range" class="form-control" style="width: 194px;">
+            <select name="time_range" class="form" width="194px">
               <option value="long_term">long term</option>
               <option value="medium_term">medium term</option>
               <option value="short_term">short term</option>
             </select>
           </div>
-          <br/>
-          <input type="submit" value="Find concerts" class="btn btn-lg btn-primary btn-outline-primary"></input>
-          <br/>
+          <input type="submit" value="Find concerts" class="btn btn-lg btn-outline-primary"></input>
+          <input type="hidden" name="code" value="{{ code }}">
         </center>
       </div>
-      <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" class="low_left"/>
-      <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" class="low_right"/>
     </form>
-    <script type="text/javascript">
-      var width = document.getElementById('foo').offsetWidth
-      document.write(width)
-    </script>
+
+    <img src="/static/concerts/powered-by-songkick-black.png" alt="powered by songkick" class="low_left"/>
+    <img src="/static/concerts/Spotify_Logo_RGB_Black.png" alt="spotify" class="low_right"/>
   </body>
 </html>

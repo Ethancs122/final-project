@@ -1,83 +1,110 @@
 <!doctype html>
 <html>
-<head>
-  <title>Table</title>
-  <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
-  <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
-  <style type="text/css">
-  .main {
-    width: 60%;
-    margin-top: 1rem;
-  }
-  .bar {
-    margin-top: 1%;
-    display: flex;
-    align-items: center;
-    justify-content: space-between;
-  }
-  h1 {
-    margin-top: 1%;
-    font-size: 84px;
-    font-family: 'Josefin Sans', sans-serif;
-  }
-  </style>
-  <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
-</head>
+  <head>
+    <title>Table</title>
 
-<body>
-  <div class="bar">
-    <a href="http://127.0.0.1:8000/concerts/form/?code={{ code }}" class="btn btn-lg btn-primary btn-outline-primary" style="margin-left: 2%">Return</a>
-    <h1>Concert Finder</h1>
-    <a href="/concerts" class="btn btn-lg btn-primary btn-outline-primary" style="margin-right: 2%">Logout</a>
-  </div>
-  <hr style="margin: 0;"/>
-  <center>
-  <div class="main">
-    <table cellpadding="0" cellspacing="0" border="0" class="datatable table table-striped table-bordered">
-      <thead>
-        <tr>
-          <th>Rank</th>
-          <th>Artist</th>
-          <th>Map</th>
-        </tr>
-      </thead>
-      <tbody>
-      {% for artist in top_artists %}
-        <tr>
-          <td>{{ forloop.counter }}</td>
-          <td>{{ artist }}</td>
-          <td id={{ forloop.counter }}></td>
-        </tr>
-      {% endfor %}
-      </tbody>
-    </table>
-  </div>
-  </center>
-  <script>
-    {% load js %}
-    var a = {{ top_artists | js }};
-    jQuery.each(a, function( i, val ) {
-                                       $.getJSON("http://api.songkick.com/api/3.0/search/artists.json?apikey=cXZIiAYhAxu4hSUU&per_page=1&query=" + 
-                                         encodeURI(val.replace(/\s/g, '_')), 
-                                        function(data) {
-                                                        var page = data.resultsPage
-                                                        if (page.totalEntries) {
-                                                          artist = page.results.artist[0]
-                                                          if (artist.onTourUntil) {
-                                                            var str = artist.id + '_' + val.replace(/\s/g, '_');
-                                                            $("#" + (i + 1)).append('<a href=' + str + '?code={{code}}' + '>Upcoming concerts for ' + val + '</a>')
-                                                          }
-                                                          else {
-                                                            $("#" + (i + 1)).append(val + ' has no upcoming concerts')
-                                                          }
-                                                        }
-                                                        else {
-                                                          $("#" + (i + 1)).append(val + ' has no upcoming concerts')
-                                                        }
-                                                       }
-                                                );
-                                      }
-               );
-  </script>
-</body>
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/4.0.0/css/bootstrap.min.css">
+    <link href="https://fonts.googleapis.com/css?family=Josefin+Sans:300" rel="stylesheet">
+
+    <style type="text/css">
+      .main {
+        width: 60%;
+        margin-top: 1rem;
+      }
+      .bar {
+        margin-top: 1%;
+        display: flex;
+        align-items: center;
+        justify-content: space-between;
+      }
+      h1 {
+        margin-top: 1%;
+        font-size: 84px;
+        font-family: 'Josefin Sans', sans-serif;
+      }
+    </style>
+
+    <script src="https://ajax.googleapis.com/ajax/libs/jquery/3.3.1/jquery.min.js"></script>
+  </head>
+
+  <body>
+    <div class="bar">
+      <a href="/concerts/form/?code={{ code }}" class="btn btn-lg btn-outline-primary" style="margin-left: 2%">Return</a>
+      <h1>Concert Finder</h1>
+      <a href="/concerts/" class="btn btn-lg btn-outline-primary" style="margin-right: 2%">Logout</a>
+    </div>
+
+    <hr style="margin: 0;"/>
+
+    <center>
+      <div class="main">
+        <table class="datatable table table-striped table-bordered">
+          <thead>
+            <tr>
+              <th>Rank</th>
+              <th>Artist</th>
+              <th>Map</th>
+            </tr>
+          </thead>
+          <tbody>
+          {% for name, image_url in artist_info %}
+            <tr>
+              <td>{{ forloop.counter }}</td>
+              <td>{{ name }}</td>
+              <!--The "Map" column is initially left blank, 
+                  but each entry is labeled with an id 
+                  so it can be filled in as soon as 
+                  the results are fetched from songkick 
+                  using jQuery-->
+              <td id={{ forloop.counter }}></td>
+            </tr>
+          {% endfor %}
+          </tbody>
+        </table>
+      </div>
+    </center>
+
+    <script>
+      {% load js %}
+      /* Converting from python array to java array */
+      var info = {{ artist_info | js }};
+      jQuery.each(info, function(i, val) {
+        var name = val[0];
+        var image_url = val[1];
+        /* Use the songkick API to search for the artist's name */
+        $.getJSON("http://api.songkick.com/api/3.0/search/artists.json?apikey=cXZIiAYhAxu4hSUU&per_page=1&query=" + 
+          encodeURI(name.replace(/\s/g, '_')), 
+          function(data) {
+            var page = data.resultsPage
+            if (page.totalEntries) {
+              /* Use the first result, if there is one. */
+              artist = page.results.artist[0]
+              if (artist.onTourUntil) {
+                /* If the artist is on tour, fill in the associated row 
+                   in the "Map" column with a button that sends 
+                   the user to the artist's map page. This button 
+                   also sends the artist's name and image_url to the
+                   map page via a POST request */
+                var form = "<form action=\'" + artist.id + "\' method=\'post\'>"
+                         + "{% csrf_token %}"
+                         + "<input type=\'submit\' class=\'btn btn-outline-primary\'"
+                         + "value=\'Upcoming concerts for " + name + "\'></input>"
+                         + "<input type=\'hidden\' name=\'name\' value=\'" + name + "\'></input>"
+                         + "<input type=\'hidden\' name=\'image_url\' value=\'" + image_url + "\'></input>"
+                         + "</form>"
+                $("#" + (i + 1)).append(form);
+              }
+              /* If the artist is not on tour, let the user know. */
+              else {
+                $("#" + (i + 1)).append(name + ' has no upcoming concerts');
+              }
+            }
+            /* If there were no results for this artist, let the user know. */
+            else {
+              $("#" + (i + 1)).append(name + ' has no upcoming concerts');
+            }
+          });
+      });
+    </script>
+  </body>
 </html>
