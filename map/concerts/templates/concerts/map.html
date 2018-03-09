@@ -176,9 +176,23 @@
               if (!ISO_8601) {
                 var ISO_8601 = event.start.date
               }
+              var date = ISO_8601.toString();
+              var date_data = date.split('-');
+              var months = ['January', 'February', 'March', 'April', 'May', 'June', 'July', 'August', 'September', 'October', 'November', 'December']
+              var year = date_data[0]
+              var month = months[date_data[1] - 1]
+              var day = date_data[2].substr(0, 2)
+              var time = date_data[2].substr(3, 5)
+              if (time) {
+                var dat_str = month + " " + day + ", " + year + " at " + time
+              }
+              else {
+                var dat_str = month + " " + day + ", " + year
+              }
+
               var row = "<tr>"
                       + "<td>" + (i + 1) + "</td>"
-                      + "<td>" + ISO_8601 + "</td>"
+                      + "<td>" + dat_str + "</td>"
                       + "<td>" + venue + "</td>"
                       + "<td>" + city + "</td>"
                       + "</tr>"
